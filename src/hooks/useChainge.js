@@ -5,112 +5,79 @@ import { useVaultProgram } from "./useVaultProgram";
 import { useTransactionMonitor } from "./useTransactionMonitor";
 
 export function useChainge() {
-  const { publicKey, connected, disconnect } = useWallet();
-  const { connection } = useConnection();
-  const vault = useVaultProgram();
+  var publicKey = useWallet().publicKey;
+  var connected = useWallet().connected;
+  var disconnect = useWallet().disconnect;
+  var connection = useConnection().connection;
+  var vault = useVaultProgram();
 
-  // Config
-  const [roundUpAmount, setRoundUpAmount] = useState(0.1);
-  const [strategy, setStrategy] = useState("stake");
-  const [isActive, setIsActive] = useState(false);
+  var _roundUp = useState(0.1);
+  var roundUpAmount = _roundUp[0];
+  var setRoundUpAmount = _roundUp[1];
 
-  // State
-  const [totalSaved, setTotalSaved] = useState(0);
-  const [transactions, setTransactions] = useState([]);
-  const [solBalance, setSolBalance] = useState(0);
-  const [vaultData, setVaultData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  var _strat = useState("stake");
+  var strategy = _strat[0];
+  var setStrategy = _strat[1];
 
-  // Round-up handler — deposits into real contract
-  const handleRoundUp = useCallback(
-    async (event) => {
-      setTransactions((prev) => [event, ...prev.slice(0, 49)]);
+  var _active = useState(false);
+  var isActive = _active[0];
+  var setIsActive = _active[1];
 
-      // Deposit the round-up into the on-chain vault
-      try {
-        await vault.deposit(event.roundUp);
-        setTotalSaved((prev) => prev + event.roundUp);
-      } catch (err) {
-        console.error("[Chainge] Deposit failed:", err);
-        // Still track it locally even if on-chain fails
-        setTotalSaved((prev) => prev + event.roundUp);
-      }
-    },
-    [vault]
-  );
+  var _saved = useState(0);
+  var totalSaved = _saved[0];
+  var setTotalSaved = _saved[1];
 
-  const { isMonitoring, startPolling, stopPolling } = useTransactionMonitor(
-    publicKey?.toString() || null,
-    roundUpAmount,
-    handleRoundUp
-  );
+  var _txs = useState([]);
+  var transactions = _txs[0];
+  var setTransactions = _txs[1];
 
-  // Fetch SOL balance
-  useEffect(() => {
-    if (!connected || !publicKey || !connection) {
-      setSolBalance(0);
-      return;
-    }
-    const fetchBalance = async () => {
-      try {
-        const bal = await connectio
-cat > src/hooks/useChainge.js << 'EOF'
-import { useState, useCallback, useEffect } from "react";
-import { useWallet, useConnection } from "@solana/wallet-adapter-react";
-import { LAMPORTS_PER_SOL } from "@solana/web3.js";
-import { useVaultProgram } from "./useVaultProgram";
-import { useTransactionMonitor } from "./useTransactionMonitor";
+  var _bal = useState(0);
+  var solBalance = _bal[0];
+  var setSolBalance = _bal[1];
 
-export function useChainge() {
-  const { publicKey, connected, disconnect } = useWallet();
-  const { connection } = useConnection();
-  const vault = useVaultProgram();
+  var _vault = useState(null);
+  var vaultData = _vault[0];
+  var setVaultData = _vault[1];
 
-  const [roundUpAmount, setRoundUpAmount] = useState(0.1);
-  const [strategy, setStrategy] = useState("stake");
-  const [isActive, setIsActive] = useState(false);
-  const [totalSaved, setTotalSaved] = useState(0);
-  const [transactions, setTransactions] = useState([]);
-  const [solBalance, setSolBalance] = useState(0);
-  const [vaultData, setVaultData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  var _load = useState(false);
+  var loading = _load[0];
+  var setLoading = _load[1];
 
-  const handleRoundUp = useCallback(async (event) => {
-    setTransactions((prev) => [event, ...prev.slice(0, 49)]);
-    try {
-      await vault.deposit(event.roundUp);
-      setTotalSaved((prev) => prev + event.roundUp);
-    } catch (err) {
+  var _err = useState(null);
+  var error = _err[0];
+  var setError = _err[1];
+
+  var handleRoundUp = useCallback(function(event) {
+    setTransactions(function(prev) { return [event].concat(prev.slice(0, 49)); });
+    vault.deposit(event.roundUp).then(function() {
+      setTotalSaved(function(prev) { return prev + event.roundUp; });
+    }).catch(function(err) {
       console.error("[Chainge] Deposit failed:", err);
-      setTotalSaved((prev) => prev + event.roundUp);
-    }
+      setTotalSaved(function(prev) { return prev + event.roundUp; });
+    });
   }, [vault]);
 
-  const { isMonitoring, startPolling, stopPolling } = useTransactionMonitor(
-    publicKey?.toString() || null,
+  var monitor = useTransactionMonitor(
+    publicKey ? publicKey.toString() : null,
     roundUpAmount,
     handleRoundUp
   );
 
-  useEffect(() => {
+  useEffect(function() {
     if (!connected || !publicKey || !connection) { setSolBalance(0); return; }
-    const fetchBalance = async () => {
-      try {
-        const bal = await connection.getBalance(publicKey);
+    var fetchBalance = function() {
+      connection.getBalance(publicKey).then(function(bal) {
         setSolBalance(bal / LAMPORTS_PER_SOL);
-      } catch (err) { console.error("[Chainge] Balance fetch error:", err); }
+      }).catch(function(err) { console.error("[Chainge] Balance error:", err); });
     };
     fetchBalance();
-    const interval = setInterval(fetchBalance, 30000);
-    return () => clearInterval(interval);
+    var interval = setInterval(fetchBalance, 30000);
+    return function() { clearInterval(interval); };
   }, [connected, publicKey, connection]);
 
-  useEffect(() => {
+  useEffect(function() {
     if (!connected || !publicKey) return;
-    const loadVault = async () => {
-      const data = await vault.fetchVault();
+    vault.fetchVault().then(function(data) {
       if (data) {
         setVaultData(data);
         setTotalSaved(data.totalDeposited);
@@ -118,58 +85,62 @@ export function useChainge() {
         setStrategy(data.strategy);
         setIsActive(data.isActive);
       }
-    };
-    loadVault();
+    });
   }, [connected, publicKey]);
 
-  const activate = useCallback(async () => {
+  var activate = useCallback(function() {
     if (!connected || !publicKey || !connection) return;
     setLoading(true);
     setError(null);
-    try {
-      const existingVault = await vault.fetchVault();
+    vault.fetchVault().then(function(existingVault) {
       if (!existingVault) {
-        await vault.initializeVault(roundUpAmount, strategy);
+        return vault.initializeVault(roundUpAmount, strategy);
       } else {
-        await vault.updateSettings(roundUpAmount, strategy, true);
+        return vault.updateSettings(roundUpAmount, strategy, true);
       }
+    }).then(function() {
       setIsActive(true);
-      startPolling(connection, publicKey);
-      const data = await vault.fetchVault();
+      monitor.startPolling(connection, publicKey);
+      return vault.fetchVault();
+    }).then(function(data) {
       if (data) setVaultData(data);
-    } catch (err) {
+    }).catch(function(err) {
       console.error("[Chainge] Activation error:", err);
       setError(err.message);
-    } finally { setLoading(false); }
-  }, [connected, publicKey, connection, vault, roundUpAmount, strategy, startPolling]);
+    }).finally(function() { setLoading(false); });
+  }, [connected, publicKey, connection, vault, roundUpAmount, strategy, monitor]);
 
-  const deactivate = useCallback(async () => {
-    try { await vault.updateSettings(null, null, false); } catch (err) { console.error("[Chainge] Deactivation error:", err); }
+  var deactivate = useCallback(function() {
+    vault.updateSettings(null, null, false).catch(function(err) {
+      console.error("[Chainge] Deactivation error:", err);
+    });
     setIsActive(false);
-    stopPolling();
-  }, [vault, stopPolling]);
+    monitor.stopPolling();
+  }, [vault, monitor]);
 
-  const withdrawFunds = useCallback(async (amount) => {
+  var withdrawFunds = useCallback(function(amount) {
     if (!amount || amount <= 0) return;
     setLoading(true);
-    try {
-      await vault.withdraw(amount);
-      const data = await vault.fetchVault();
+    vault.withdraw(amount).then(function() {
+      return vault.fetchVault();
+    }).then(function(data) {
       if (data) { setVaultData(data); setTotalSaved(data.totalDeposited - data.totalWithdrawn); }
-    } catch (err) { console.error("[Chainge] Withdraw error:", err); setError(err.message); }
-    finally { setLoading(false); }
+    }).catch(function(err) {
+      console.error("[Chainge] Withdraw error:", err);
+      setError(err.message);
+    }).finally(function() { setLoading(false); });
   }, [vault]);
 
-  const txCount = transactions.length + (vaultData?.depositCount || 0);
-  const avgRoundUp = txCount > 0 ? totalSaved / txCount : 0;
-  const projectedMonthly = avgRoundUp * 30 * 12;
-  const walletAddress = publicKey ? publicKey.toString().slice(0, 4) + "..." + publicKey.toString().slice(-3) : "";
+  var txCount = transactions.length + (vaultData ? vaultData.depositCount || 0 : 0);
+  var avgRoundUp = txCount > 0 ? totalSaved / txCount : 0;
+  var projectedMonthly = avgRoundUp * 30 * 12;
+  var walletAddress = publicKey ? publicKey.toString().slice(0, 4) + "..." + publicKey.toString().slice(-3) : "";
 
   return {
-    connected, publicKey, walletAddress, solBalance,
-    roundUpAmount, setRoundUpAmount, strategy, setStrategy,
-    isActive, isMonitoring, activate, deactivate, loading, error,
-    totalSaved, transactions, txCount, avgRoundUp, projectedMonthly, vaultData,
-    withdrawFunds, handleRoundUp,
+    connected: connected, publicKey: publicKey, walletAddress: walletAddress, solBalance: solBalance,
+    roundUpAmount: roundUpAmount, setRoundUpAmount: setRoundUpAmount, strategy: strategy, setStrategy: setStrategy,
+    isActive: isActive, isMonitoring: monitor.isMonitoring, activate: activate, deactivate: deactivate, loading: loading, error: error,
+    totalSaved: totalSaved, transactions: transactions, txCount: txCount, avgRoundUp: avgRoundUp, projectedMonthly: projectedMonthly, vaultData: vaultData,
+    withdrawFunds: withdrawFunds, handleRoundUp: handleRoundUp
   };
 }
