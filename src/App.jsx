@@ -11,6 +11,8 @@ export default function App() {
   const [screen, setScreen] = useState("landing");
   const [animateIn, setAnimateIn] = useState(true);
   const [selectedLst, setSelectedLst] = useState(null);
+  const [lockDays, setLockDays] = useState(0);
+  const [lockStartTime, setLockStartTime] = useState(null);
 
   const navigate = useCallback((s) => {
     setAnimateIn(false);
@@ -19,8 +21,10 @@ export default function App() {
 
   const handleConnected = useCallback(() => { navigate("config"); }, [navigate]);
 
-  const handleActivate = useCallback((lstChoice) => {
+  const handleActivate = useCallback((lstChoice, days) => {
     setSelectedLst(lstChoice);
+    setLockDays(days || 0);
+    if (days > 0) setLockStartTime(Date.now());
     chainge.activate();
     navigate("dashboard");
   }, [chainge, navigate]);
@@ -77,6 +81,8 @@ export default function App() {
             onPause={chainge.deactivate}
             onResume={chainge.activate}
             onWithdraw={chainge.withdrawFunds}
+            lockDays={lockDays}
+            lockStartTime={lockStartTime}
           />
         )}
 

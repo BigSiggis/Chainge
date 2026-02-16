@@ -1,17 +1,14 @@
 import React, { useState } from "react";
-import { ROUND_OPTIONS, STRATEGIES, LST_OPTIONS } from "../utils/constants";
+import { ROUND_OPTIONS, STRATEGIES, LST_OPTIONS, LOCK_OPTIONS } from "../utils/constants";
 
 export default function Config({ roundUpAmount, setRoundUpAmount, strategy, setStrategy, onActivate }) {
   const [selectedLst, setSelectedLst] = useState("jito");
   const [lstOpen, setLstOpen] = useState(false);
+  const [lockDays, setLockDays] = useState(0);
 
   function handleStrategyClick(id) {
-    if (id === strategy && id === "stake") {
-      setLstOpen(!lstOpen);
-    } else {
-      setStrategy(id);
-      setLstOpen(id === "stake");
-    }
+    if (id === strategy && id === "stake") { setLstOpen(!lstOpen); }
+    else { setStrategy(id); setLstOpen(id === "stake"); }
   }
 
   return (
@@ -22,9 +19,7 @@ export default function Config({ roundUpAmount, setRoundUpAmount, strategy, setS
         <div style={{ fontSize: 12, color: "#666", textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 8, fontWeight: 600 }}>Round up to nearest</div>
         <div style={{ display: "flex", gap: 8 }}>
           {ROUND_OPTIONS.map((opt) => (
-            <div key={opt.value} onClick={() => setRoundUpAmount(opt.value)} style={{ flex: 1, padding: "12px 8px", borderRadius: 10, border: roundUpAmount === opt.value ? "1px solid #00ffa350" : "1px solid #ffffff12", background: roundUpAmount === opt.value ? "#00ffa310" : "#ffffff04", color: roundUpAmount === opt.value ? "#00ffa3" : "#888", textAlign: "center", cursor: "pointer", fontSize: 14, fontWeight: 600 }}>
-              {opt.label}
-            </div>
+            <div key={opt.value} onClick={() => setRoundUpAmount(opt.value)} style={{ flex: 1, padding: "12px 8px", borderRadius: 10, border: roundUpAmount === opt.value ? "1px solid #00ffa350" : "1px solid #ffffff12", background: roundUpAmount === opt.value ? "#00ffa310" : "#ffffff04", color: roundUpAmount === opt.value ? "#00ffa3" : "#888", textAlign: "center", cursor: "pointer", fontSize: 14, fontWeight: 600 }}>{opt.label}</div>
           ))}
         </div>
         <div style={{ fontSize: 13, color: "#555", marginTop: 10 }}>
@@ -61,7 +56,23 @@ export default function Config({ roundUpAmount, setRoundUpAmount, strategy, setS
           </div>
         ))}
       </div>
-      <button onClick={() => onActivate(strategy === "stake" ? selectedLst : null)} style={{ background: "#00ffa3", color: "#0a0a0f", border: "none", borderRadius: 12, padding: "16px 32px", fontSize: 16, fontWeight: 700, cursor: "pointer", width: "100%", letterSpacing: "-0.3px", marginTop: 24 }}>Activate Chainge</button>
+      <div style={{ marginBottom: 32 }}>
+        <div style={{ fontSize: 12, color: "#666", textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 8, fontWeight: 600 }}>🔐 Degen Lock</div>
+        <div style={{ fontSize: 13, color: "#555", marginBottom: 12 }}>Lock your vault to protect savings from yourself. Emergency withdraw available with 15% penalty.</div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          {LOCK_OPTIONS.map((opt) => (
+            <div key={opt.value} onClick={() => setLockDays(opt.value)} style={{ padding: "10px 16px", borderRadius: 10, border: lockDays === opt.value ? "1px solid #ff444450" : "1px solid #ffffff12", background: lockDays === opt.value ? "#ff444410" : "#ffffff04", color: lockDays === opt.value ? "#ff4444" : "#888", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>
+              {opt.label}
+            </div>
+          ))}
+        </div>
+        {lockDays > 0 && (
+          <div style={{ fontSize: 12, color: "#ff4444", marginTop: 10, padding: "8px 12px", background: "#ff444408", border: "1px solid #ff444420", borderRadius: 8 }}>
+            ⚠ Your vault will be locked for {lockDays} days. Emergency withdraw costs 15% penalty.
+          </div>
+        )}
+      </div>
+      <button onClick={() => onActivate(strategy === "stake" ? selectedLst : null, lockDays)} style={{ background: "#00ffa3", color: "#0a0a0f", border: "none", borderRadius: 12, padding: "16px 32px", fontSize: 16, fontWeight: 700, cursor: "pointer", width: "100%", letterSpacing: "-0.3px" }}>Activate Chainge</button>
       <div style={{ textAlign: "center", fontSize: 13, color: "#444", marginTop: 16 }}>You can change these anytime</div>
     </div>
   );

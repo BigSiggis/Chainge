@@ -1,10 +1,18 @@
-export var SOL_PRICE_USD = 138;
+export var SOL_PRICE_USD = 88;
 export var ROUND_OPTIONS = [
   { label: "0.01", value: 0.01 },
   { label: "0.05", value: 0.05 },
   { label: "0.1", value: 0.1 },
   { label: "0.5", value: 0.5 },
 ];
+export var LOCK_OPTIONS = [
+  { label: "No Lock", value: 0, desc: "Withdraw anytime" },
+  { label: "1 Week", value: 7, desc: "7 day lock" },
+  { label: "1 Month", value: 30, desc: "30 day lock" },
+  { label: "3 Months", value: 90, desc: "90 day lock" },
+  { label: "6 Months", value: 180, desc: "180 day lock" },
+];
+export var EMERGENCY_PENALTY = 0.15;
 export var LST_OPTIONS = [
   { id: "jito", name: "JitoSOL", desc: "Validator rewards + MEV tips. Largest LST on Solana.", apy: "~7.5%" },
   { id: "helius", name: "hSOL (Helius)", desc: "0% commission, 100% MEV rewards. Largest validator.", apy: "~7.5%" },
