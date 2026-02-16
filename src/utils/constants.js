@@ -1,57 +1,21 @@
-// ── Network & RPC ──
-export const NETWORK = "mainnet-beta";
-export const HELIUS_API_KEY = import.meta.env.VITE_HELIUS_API_KEY || "";
-
-// ── Round-up Options ──
-export const ROUND_OPTIONS = [
-  { value: 0.01, label: "0.01 SOL" },
-  { value: 0.05, label: "0.05 SOL" },
-  { value: 0.1, label: "0.1 SOL" },
-  { value: 0.5, label: "0.5 SOL" },
+export var SOL_PRICE_USD = 138;
+export var ROUND_OPTIONS = [
+  { label: "0.01", value: 0.01 },
+  { label: "0.05", value: 0.05 },
+  { label: "0.1", value: 0.1 },
+  { label: "0.5", value: 0.5 },
 ];
-
-// ── Yield Strategies ──
-export const STRATEGIES = [
-  {
-    id: "stake",
-    name: "Liquid Stake",
-    desc: "Staked into JitoSOL — you earn validator rewards + MEV tips. Redeemable anytime.",
-    apy: "7.2%",
-    icon: "◈",
-    risk: null,
-  },
-  {
-    id: "lp",
-    name: "LP Yield",
-    desc: "Deposited into concentrated SOL-USDC liquidity on Orca. You earn swap fees from every trade.",
-    apy: "12-18%",
-    icon: "◇",
-    risk: "Impermanent loss risk — if SOL price moves significantly, your position may underperform just holding.",
-  },
-  {
-    id: "dca",
-    name: "DCA into Token",
-    desc: "Auto-buys your chosen token via Jupiter DCA. Spreads entries over time to reduce risk.",
-    apy: "—",
-    icon: "↻",
-    risk: null,
-  },
-  {
-    id: "save",
-    name: "Vault",
-    desc: "SOL held in a non-custodial on-chain vault. No yield, just stacking. Withdraw anytime.",
-    apy: "0%",
-    icon: "◉",
-    risk: null,
-  },
+export var LST_OPTIONS = [
+  { id: "jito", name: "JitoSOL", desc: "Validator rewards + MEV tips. Largest LST on Solana.", apy: "~7.5%" },
+  { id: "helius", name: "hSOL (Helius)", desc: "0% commission, 100% MEV rewards. Largest validator.", apy: "~7.5%" },
+  { id: "phantom", name: "PSOL (Phantom)", desc: "MEV tips + priority fees. Native Phantom staking.", apy: "~7%" },
+  { id: "marinade", name: "mSOL (Marinade)", desc: "100+ validators. Most decentralized LST.", apy: "~6.1%" },
+  { id: "sanctum", name: "INF (Sanctum)", desc: "Multi-LST pool. Staking + trading fee yield.", apy: "~8%+" },
 ];
-
-// ── Token list for simulated data ──
-export const TOKEN_LIST = [
-  "POPCAT", "JUP", "MEW", "TNSR", "PYTH",
-  "RAY", "HNT", "RENDER", "DRIFT", "W",
-  "JTO", "ORCA", "MNDE", "BONK", "WIF",
+export var STRATEGIES = [
+  { id: "stake", name: "Liquid Stake", desc: "Stake spare change into a liquid staking token and earn yield.", icon: "\u26A1", apy: "6-8%", risk: null, hasLstPicker: true },
+  { id: "lp", name: "LP Yield", desc: "Concentrated SOL-USDC on Orca. Higher yield, higher risk.", icon: "\uD83D\uDCA7", apy: "12-18%", risk: "Impermanent loss risk. Your deposit value can fluctuate with price changes.", hasLstPicker: false },
+  { id: "dca", name: "DCA", desc: "Jupiter DCA auto-buys your chosen token. Spreads entries over time.", icon: "\uD83D\uDCCA", apy: "\u2014", risk: null, hasLstPicker: false },
+  { id: "save", name: "Vault", desc: "Non-custodial on-chain holding. 0% yield but withdraw anytime.", icon: "\uD83D\uDD12", apy: "0%", risk: null, hasLstPicker: false },
 ];
-
-// ── Misc ──
-export const SOL_PRICE_USD = 138; // placeholder, replace with live price fetch
+export var TOKENS = ["POPCAT","JUP","MEW","TNSR","PYTH","RAY","HNT","RENDER","DRIFT","W"];
