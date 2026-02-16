@@ -90,7 +90,7 @@ export default function Dashboard({ totalSaved, transactions, txCount, avgRoundU
       {isLocked && (
         <div style={{ background: isUnlocked ? "#00ffa308" : "#ff444408", border: isUnlocked ? "1px solid #00ffa320" : "1px solid #ff444420", borderRadius: 16, padding: "16px 24px", marginBottom: 16, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
-            <div style={{ fontSize: 12, color: isUnlocked ? "#00ffa3" : "#ff4444", textTransform: "uppercase", letterSpacing: "1.5px", fontWeight: 600 }}>{isUnlocked ? "\uD83D\uDD13 Vault Unlocked" : "\uD83D\uDD10 Degen Lock Active"}</div>
+            <div style={{ fontSize: 12, color: isUnlocked ? "#00ffa3" : "#ff4444", textTransform: "uppercase", letterSpacing: "1.5px", fontWeight: 600 }}>{isUnlocked ? "🔓 Vault Unlocked" : "🔐 Degen Lock Active"}</div>
             <div style={{ fontSize: 20, fontWeight: 700, color: "#fff", marginTop: 4 }}><Countdown unlockDate={unlockDate} /></div>
           </div>
           <div style={{ fontSize: 12, color: "#555" }}>{lockDays} day lock</div>
@@ -112,12 +112,12 @@ export default function Dashboard({ totalSaved, transactions, txCount, avgRoundU
         </div>
         <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
           <button onClick={isMonitoring ? onPause : onResume} style={{ flex: 1, background: isMonitoring ? "#ff444420" : "#00ffa320", color: isMonitoring ? "#ff4444" : "#00ffa3", border: isMonitoring ? "1px solid #ff444440" : "1px solid #00ffa340", borderRadius: 10, padding: "10px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
-            {isMonitoring ? "\u23F8 Pause" : "\u25B6 Resume"}
+            {isMonitoring ? "⏸ Pause" : "▶ Resume"}
           </button>
           {isUnlocked ? (
-            <button onClick={() => { setShowWithdraw(!showWithdraw); setShowEmergency(false); }} style={{ flex: 1, background: "#ffffff08", color: "#ccc", border: "1px solid #ffffff15", borderRadius: 10, padding: "10px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>\uD83D\uDCB0 Withdraw</button>
+            <button onClick={() => { setShowWithdraw(!showWithdraw); setShowEmergency(false); }} style={{ flex: 1, background: "#ffffff08", color: "#ccc", border: "1px solid #ffffff15", borderRadius: 10, padding: "10px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>💰 Withdraw</button>
           ) : (
-            <button onClick={() => { setShowEmergency(!showEmergency); setShowWithdraw(false); }} style={{ flex: 1, background: "#ff440015", color: "#ff4444", border: "1px solid #ff444430", borderRadius: 10, padding: "10px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>\uD83D\uDEA8 Emergency</button>
+            <button onClick={() => { setShowEmergency(!showEmergency); setShowWithdraw(false); }} style={{ flex: 1, background: "#ff440015", color: "#ff4444", border: "1px solid #ff444430", borderRadius: 10, padding: "10px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>🚨 Emergency</button>
           )}
         </div>
 
@@ -134,7 +134,7 @@ export default function Dashboard({ totalSaved, transactions, txCount, avgRoundU
 
         {showEmergency && (
           <div style={{ marginTop: 12, background: "#ff440008", border: "1px solid #ff444030", borderRadius: 10, padding: 16 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: "#ff4444", marginBottom: 8 }}>\uD83D\uDEA8 Emergency Withdraw</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: "#ff4444", marginBottom: 8 }}>🚨 Emergency Withdraw</div>
             <div style={{ fontSize: 13, color: "#888", marginBottom: 12 }}>Your vault is locked. Emergency withdraw costs a <span style={{ color: "#ff4444", fontWeight: 700 }}>15% penalty</span>.</div>
             <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
               <input type="number" step="0.001" min="0" placeholder="0.000" value={withdrawAmt} onChange={(e) => setWithdrawAmt(e.target.value)} style={{ flex: 1, background: "#0a0a0f", border: "1px solid #ff444030", borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 14, outline: "none" }} />
@@ -149,7 +149,7 @@ export default function Dashboard({ totalSaved, transactions, txCount, avgRoundU
             )}
             <div style={{ fontSize: 12, color: "#ff4444", marginBottom: 8 }}>Type "I AM WEAK" to confirm emergency withdraw</div>
             <input type="text" placeholder='Type "I AM WEAK"' value={confirmText} onChange={(e) => setConfirmText(e.target.value)} style={{ width: "100%", background: "#0a0a0f", border: "1px solid #ff444030", borderRadius: 8, padding: "10px 12px", color: "#ff4444", fontSize: 14, outline: "none", marginBottom: 12, boxSizing: "border-box" }} />
-            <button onClick={() => { if (confirmText === "I AM WEAK" && withdrawAmt > 0) { onWithdraw(parseFloat(receiveAmount)); setWithdrawAmt(""); setConfirmText(""); setShowEmergency(false); } }} disabled={confirmText !== "I AM WEAK" || !withdrawAmt} style={{ width: "100%", background: confirmText === "I AM WEAK" ? "#ff4444" : "#ff444030", color: confirmText === "I AM WEAK" ? "#fff" : "#ff444060", border: "none", borderRadius: 8, padding: "12px 16px", fontSize: 14, fontWeight: 700, cursor: confirmText === "I AM WEAK" ? "pointer" : "not-allowed" }}>\u26A0 Emergency Withdraw</button>
+            <button onClick={() => { if (confirmText === "I AM WEAK" && withdrawAmt > 0) { onWithdraw(parseFloat(receiveAmount)); setWithdrawAmt(""); setConfirmText(""); setShowEmergency(false); } }} disabled={confirmText !== "I AM WEAK" || !withdrawAmt} style={{ width: "100%", background: confirmText === "I AM WEAK" ? "#ff4444" : "#ff444030", color: confirmText === "I AM WEAK" ? "#fff" : "#ff444060", border: "none", borderRadius: 8, padding: "12px 16px", fontSize: 14, fontWeight: 700, cursor: confirmText === "I AM WEAK" ? "pointer" : "not-allowed" }}>⚠ Emergency Withdraw</button>
           </div>
         )}
       </div>
@@ -170,7 +170,7 @@ export default function Dashboard({ totalSaved, transactions, txCount, avgRoundU
       <div style={card}>
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
           <div style={label}>Round-up History</div>
-          <div style={{ fontSize: 12, color: isMonitoring ? "#00ffa3" : "#ff4444" }}>{isMonitoring ? "\u25CF Live" : "\u25CF Paused"}</div>
+          <div style={{ fontSize: 12, color: isMonitoring ? "#00ffa3" : "#ff4444" }}>{isMonitoring ? "● Live" : "● Paused"}</div>
         </div>
         {transactions.length === 0 ? (
           <div style={{ textAlign: "center", padding: "32px 0", color: "#444", fontSize: 14 }}>Waiting for your first transaction...</div>
