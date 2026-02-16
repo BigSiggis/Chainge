@@ -3,6 +3,16 @@ import { ROUND_OPTIONS, STRATEGIES, LST_OPTIONS } from "../utils/constants";
 
 export default function Config({ roundUpAmount, setRoundUpAmount, strategy, setStrategy, onActivate }) {
   const [selectedLst, setSelectedLst] = useState("jito");
+  const [lstOpen, setLstOpen] = useState(false);
+
+  function handleStrategyClick(id) {
+    if (id === strategy && id === "stake") {
+      setLstOpen(!lstOpen);
+    } else {
+      setStrategy(id);
+      setLstOpen(id === "stake");
+    }
+  }
 
   return (
     <div style={{ paddingTop: 40, paddingBottom: 20 }}>
@@ -25,7 +35,7 @@ export default function Config({ roundUpAmount, setRoundUpAmount, strategy, setS
         <div style={{ fontSize: 12, color: "#666", textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 8, fontWeight: 600 }}>Where does it go?</div>
         {STRATEGIES.map((st) => (
           <div key={st.id}>
-            <div onClick={() => setStrategy(st.id)} style={{ display: "flex", alignItems: "center", gap: 16, padding: "16px 20px", borderRadius: 12, border: strategy === st.id ? "1px solid #00ffa340" : "1px solid #ffffff10", background: strategy === st.id ? "#00ffa308" : "#ffffff04", cursor: "pointer", marginBottom: 8 }}>
+            <div onClick={() => handleStrategyClick(st.id)} style={{ display: "flex", alignItems: "center", gap: 16, padding: "16px 20px", borderRadius: 12, border: strategy === st.id ? "1px solid #00ffa340" : "1px solid #ffffff10", background: strategy === st.id ? "#00ffa308" : "#ffffff04", cursor: "pointer", marginBottom: 8 }}>
               <div style={{ fontSize: 24, width: 44, height: 44, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 10, background: "#ffffff08" }}>{st.icon}</div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 15, fontWeight: 600, color: strategy === st.id ? "#fff" : "#aaa" }}>{st.name}</div>
@@ -34,7 +44,7 @@ export default function Config({ roundUpAmount, setRoundUpAmount, strategy, setS
               </div>
               {st.apy !== "—" && <div style={{ background: "#00ffa315", color: "#00ffa3", borderRadius: 6, padding: "3px 8px", fontSize: 11, fontWeight: 600 }}>{st.apy} APY</div>}
             </div>
-            {strategy === st.id && st.hasLstPicker && (
+            {strategy === st.id && st.hasLstPicker && lstOpen && (
               <div style={{ background: "#ffffff04", border: "1px solid #ffffff10", borderRadius: 12, padding: 16, marginBottom: 8, marginTop: -4, marginLeft: 20 }}>
                 <div style={{ fontSize: 11, color: "#666", textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 10, fontWeight: 600 }}>Choose your LST</div>
                 {LST_OPTIONS.map((lst) => (
